@@ -11,8 +11,26 @@ int main()
 		std::cout << ">>";
 		std::getline(std::cin, buf);
 		if (!buf.empty())
-			std::cout << calculator.calculate(buf) << std::endl;
-		else if (std::cin.eof())
+		{
+			try
+			{
+				std::cout << calculator.calculate(buf) << std::endl;
+			}
+			catch (fy::error::math_error)
+			{
+				std::cout << "math error" << std::endl;
+			}
+			catch (fy::error::syntax_error)
+			{
+				std::cout << "syntax error" << std::endl;
+			}
+			catch (...)
+			{
+				std::cout << "unknown error" << std::endl;
+				std::cout << "the program will exit" << std::endl;
+			}
+		}
+		if (std::cin.eof())
 			break;
 	}
 }

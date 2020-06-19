@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<string>
 #include<cmath>
+#include<assert.h>
 #include "calculator.h"
 
 namespace fy
@@ -28,7 +29,7 @@ namespace fy
 
 	void Calculator::build_tree(NODE*& root, string& exp, int l, int r)
 	{
-		if (exp.empty() || l > r)
+		if (l > r)
 			throw(error::syntax_error());
 
 		if (exp[l] == '(' && exp[r] == ')')//如果最外面是一层括号
@@ -36,7 +37,7 @@ namespace fy
 		else
 		{
 			int flag = 0;//记录括号层级
-			int pos[2] = { 0 };//pos[0]表示最后一个加减号的位置，pos[1]为乘除
+			int pos[2] = { -1,-1 };//pos[0]表示最后一个加减号的位置，pos[1]为乘除
 			for (int i = l; i <= r; i++)
 			{
 				if (exp[i] == '(')
@@ -54,19 +55,20 @@ namespace fy
 			if (flag != 0)//如果括号不匹配
 				throw(error::syntax_error());
 
-			if (pos[0] == 0 && pos[1] == 0)//没有运算符，那就一定是一个数
+			if (pos[0] == -1 && pos[1] == -1)//没有运算符，那就一定是一个数
 			{
 				root = new NODE;
 				root->data = exp.substr(l, (size_t)r - l + 1);
 			}
 			else//有运算符
 			{
-				int t_pos;
+				int t_pos = -1;
 				root = new NODE;
-				if (pos[0] > 0)//有加减
+				if (pos[0] > -1)//有加减
 					t_pos = pos[0];
-				else if (pos[1] > 0)//没有加减，有乘除
+				else if (pos[1] > -1)//没有加减，有乘除
 					t_pos = pos[1];
+				assert(t_pos != -1);
 				root->data = exp[t_pos];
 				build_tree(root->l_child, exp, l, t_pos - 1);
 				build_tree(root->r_child, exp, t_pos + 1, r);
