@@ -17,6 +17,7 @@ namespace fy
 
 	double Calculator::calculate(string exp)
 	{
+		clear();
 		build_tree(__root, exp, 0, exp.size() - 1);
 		if (__root == nullptr)
 			throw(error::syntax_error());
@@ -25,6 +26,16 @@ namespace fy
 
 	void Calculator::clear()
 	{
+		clear(__root);
+	}
+
+	void Calculator::clear(NODE* p)
+	{
+		if (p == nullptr)
+			return;
+		clear(p->l_child);
+		clear(p->r_child);
+		delete p;
 	}
 
 	void Calculator::build_tree(NODE*& root, string& exp, int l, int r)
