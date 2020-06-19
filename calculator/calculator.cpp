@@ -34,7 +34,7 @@ namespace fy
 		else
 		{
 			int flag = 0;//记录括号层级
-			int pos[2] = { -1,-1 };//pos[0]表示最后一个加减号的位置，pos[1]为乘除
+			int pos[3] = { -1,-1,-1 };//pos[0]表示最后一个加减号的位置，pos[1]为乘除，pos[2]为幂
 			for (int i = l; i <= r; i++)
 			{
 				if (exp[i] == '(')
@@ -47,12 +47,14 @@ namespace fy
 						pos[0] = i;
 					if (exp[i] == '*' || exp[i] == '/')
 						pos[1] = i;
+					if (exp[i] == '^')
+						pos[2] = i;
 				}
 			}
 			if (flag != 0)//如果括号不匹配
 				throw(error::syntax_error());
 
-			if (pos[0] == -1 && pos[1] == -1)//没有运算符，那就一定是一个数或这最外面一层括号
+			if (pos[0] == -1 && pos[1] == -1 && pos[2] == -1)//没有运算符，那就一定是一个数或这最外面一层括号
 			{
 				if (exp[l] == '(' && exp[r] == ')')//如果最外面是一层括号
 					build_tree(root, exp, l + 1, r - 1);
@@ -70,6 +72,8 @@ namespace fy
 					t_pos = pos[0];
 				else if (pos[1] > -1)//没有加减，有乘除
 					t_pos = pos[1];
+				else if (pos[2] > -1)
+					t_pos = pos[2];
 				assert(t_pos != -1);
 				root->data = exp[t_pos];
 				build_tree(root->l_child, exp, l, t_pos - 1);
