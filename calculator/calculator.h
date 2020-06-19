@@ -39,7 +39,6 @@ namespace fy
 		void clear();
 
 	private:
-		void clear(NODE* p);
 		void build_tree(NODE*& root, string& exp, int l, int r);
 		NODE* __root;
 	};
