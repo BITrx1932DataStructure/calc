@@ -31,9 +31,6 @@ namespace fy
 	{
 		if (l > r)
 			throw(error::syntax_error());
-
-		if (exp[l] == '(' && exp[r] == ')')//如果最外面是一层括号
-			build_tree(root, exp, l + 1, r - 1);
 		else
 		{
 			int flag = 0;//记录括号层级
@@ -55,10 +52,15 @@ namespace fy
 			if (flag != 0)//如果括号不匹配
 				throw(error::syntax_error());
 
-			if (pos[0] == -1 && pos[1] == -1)//没有运算符，那就一定是一个数
+			if (pos[0] == -1 && pos[1] == -1)//没有运算符，那就一定是一个数或这最外面一层括号
 			{
-				root = new NODE;
-				root->data = exp.substr(l, (size_t)r - l + 1);
+				if (exp[l] == '(' && exp[r] == ')')//如果最外面是一层括号
+					build_tree(root, exp, l + 1, r - 1);
+				else
+				{
+					root = new NODE;
+					root->data = exp.substr(l, (size_t)r - l + 1);
+				}
 			}
 			else//有运算符
 			{
